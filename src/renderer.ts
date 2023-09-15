@@ -1,10 +1,35 @@
 //import { ipcRenderer } from 'electron';
+interface SpellingCheckResult {
+    correct: boolean;
+    suggestion?: string;
+}
 
 const { ipcRenderer } = require('electron');
 const fontSelector = document.getElementById('fontSelector')! as HTMLSelectElement;
 const mathmlInput = document.getElementById('mathmlInput')! as HTMLInputElement;
 const fontSizeInput = document.getElementById('fontSizeInput') as HTMLInputElement;
 const editor = document.getElementById('editor')! as HTMLTextAreaElement;
+const Nodehun = require('nodehun');
+const fs = require('fs');
+
+// Load dictionaries
+const affix = fs.readFileSync('Wordy/dictionaries/en_US/en_US.aff');
+const dictionary = fs.readFileSync('Wordy/dictionaries/en_US/en_US.dic');
+
+// Initialize nodehun
+const nodehun = new Nodehun(affix, dictionary);
+
+// Function to check spelling
+function checkSpelling(word: string): Promise<SpellingCheckResult> {
+    return new Promise((resolve, reject) => {
+        nodehun.spellSuggest(word, (err: any, correct: boolean, suggestion: string, origWord: string) => {
+            if (err) reject(err);
+            resolve({ correct, suggestion });
+        });
+    });
+}
+
+// TODO: Integrate checkSpelling with your editor to highlight misspelled words
 
 if (editor) {
     ipcRenderer.on('request-content', () => {
@@ -74,4 +99,19 @@ fontSizeInput.addEventListener('input', () => {
     if (newFontSize && !isNaN(Number(newFontSize))) {
         editor.style.fontSize = newFontSize + 'px';
     }
+});
+document.getElementById('editor')?.addEventListener('input', () => {
+const editor = document.getElementById('editor');
+    if (!editor) return;
+        const words = editor?.innerText.split(/\s+/) || [];
+
+        words.forEach(async word => {
+            const { correct } = await checkSpelling(word);
+            if (!correct) {
+                // Highlight the word
+                // This will wrap the word in a <span> with a specific class
+                const highlighted = `<span class="misspelled">${word}</span>`;
+                editor.innerHTML = editor.innerHTML.replace(word, highlighted);
+            }
+        });
 });
