@@ -60,7 +60,10 @@ electron_1.ipcMain.on('content-received', function (event, content) {
     electron_1.dialog.showSaveDialog({
         title: 'Save text output',
         filters: [
-            { name: 'Text Files', extensions: ['txt'] }
+            { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Rich Text Files', extensions: ['rtf'] },
+            { name: 'Wordy Custom Format', extensions: ['wrdy'] }
         ]
     }).then(function (result) {
         if (!result.canceled && result.filePath) {
@@ -74,7 +77,10 @@ electron_1.ipcMain.on('load-file', function (event) {
     electron_1.dialog.showOpenDialog({
         title: 'Open text file',
         filters: [
-            { name: 'Text Files', extensions: ['txt'] }
+            { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Text Files', extensions: ['txt'] },
+            { name: 'Rich Text Files', extensions: ['rtf'] },
+            { name: 'Wordy Custom Format', extensions: ['wrdy'] }
         ],
         properties: ['openFile']
     }).then(function (result) {

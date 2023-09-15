@@ -74,11 +74,31 @@ ipcRenderer.on('set-font', (event, font) => {
     }
 });
 
-ipcRenderer.on('load-file-content', (event, content) => {
-    if (editor) {
-        editor.value = content;
+ipcRenderer.on('load-file-content', (event, content, fileType) => {
+    const editor = document.getElementById('editor');
+    if (!editor) return;
+
+    switch (fileType) {
+        case '.txt':
+        case '.rtf':
+            editor.innerText = content;
+            break;
+        case '.wrdy':
+            try {
+                const parsedContent = JSON.parse(content);
+                editor.innerText = parsedContent.text || '';
+            } catch (error) {
+                console.error('Error parsing .wrdy file:', error);
+            }
+            break;
+        default:
+            editor.innerText = content;
+            break;
     }
 });
+//    if (editor) {
+//        editor.value = const content: any;
+//    }
 document.getElementById("boldButton")?.addEventListener('click', () => {
     // Toggle bold for the selected text in the editor
     document.execCommand('bold', false);

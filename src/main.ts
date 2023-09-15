@@ -44,7 +44,10 @@ ipcMain.on('content-received', (event, content) => {
   dialog.showSaveDialog({
     title: 'Save text output',
     filters: [
-      { name: 'Text Files', extensions: ['txt'] }
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Rich Text Files', extensions: ['rtf'] },
+      { name: 'Wordy Custom Format', extensions: ['wrdy'] }
     ]
   }).then(result => {
     if (!result.canceled && result.filePath) {
@@ -61,7 +64,10 @@ ipcMain.on('load-file', (event) => {
   dialog.showOpenDialog({
     title: 'Open text file',
     filters: [
-      { name: 'Text Files', extensions: ['txt'] }
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Text Files', extensions: ['txt'] },
+      { name: 'Rich Text Files', extensions: ['rtf'] },
+      { name: 'Wordy Custom Format', extensions: ['wrdy'] }
     ],
     properties: ['openFile']
   }).then(result => {
